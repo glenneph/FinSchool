@@ -1,0 +1,147 @@
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@100,200,300,400,500,600,700,800,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+/* Generated from variables.json */
+/* Contains only values from your JSON */
+/* No dark theme block */
+
+:root {
+    /* ---------------- COLORS ---------------- */
+    /* Green */
+    --green-50: #f4f9f5;
+    --green-100: #e6f2e8;
+    --green-200: #cfe3d3;
+    --green-300: #aed0b6;
+    --green-400: #7aae86;
+    --green-500: #579065;
+    --green-600: #447550;
+    --green-700: #385d41;
+    --green-800: #304b37;
+    --green-900: #293e2e;
+    --green-950: #122116;
+  
+    /* Neutral */
+    --neutral-25: #ffffff;
+    --neutral-50: #f6f6f6;
+    --neutral-100: #e7e7e7;
+    --neutral-200: #d1d1d1;
+    --neutral-300: #b0b0b0;
+    --neutral-400: #888888;
+    --neutral-500: #6d6d6d;
+    --neutral-600: #5d5d5d;
+    --neutral-700: #404042;
+    --neutral-800: #2b2b2b;
+    --neutral-900: #1d1d20;
+    --neutral-950: #000000;
+  
+    /* Basic */
+    --basic-red: #ff6767;
+  
+    /* ---------------- FONT ---------------- */
+    /* Font Weight */
+    --font-weight-400: 400;
+    --font-weight-500: 500;
+    --font-weight-600: 600;
+    --font-weight-700: 700;
+  
+    /* Font Typeface */
+    --font-typeface-body: "DM Sans";
+    --font-typeface-display: "Cabinet Grotesk";
+  
+    /* Font Sizes */
+    --font-size-3xs: 10px;
+    --font-size-2xs: 12px;
+    --font-size-xs: 14px;
+    --font-size-sm: 16px;
+    --font-size-md: 20px;
+    --font-size-lg: 24px;
+    --font-size-xl: 32px;
+    --font-size-2xl: 40px;
+    --font-size-3xl: 52px;
+    --font-size-18: 18px;
+  
+    /* Line Heights */
+    --line-height-3xs: 12px;
+    --line-height-2xs: 14px;
+    --line-height-xs: 21px;
+    --line-height-sm: 21px;
+    --line-height-md: 27px;
+    --line-height-lg: 30px;
+    --line-height-xl: 36px;
+    --line-height-2xl: 48px;
+    --line-height-3xl: 61px;
+    --line-height-18: 24px;
+  
+    /* ---------------- VALUES ---------------- */
+    --values-0px: 0px;
+    --values-4px: 4px;
+    --values-8px: 8px;
+    --values-10px: 10px;
+    --values-12px: 12px;
+    --values-16px: 16px;
+    --values-20px: 20px;
+    --values-24px: 24px;
+    --values-28px: 28px;
+    --values-32px: 32px;
+    --values-40px: 40px;
+    --values-48px: 48px;
+    --values-56px: 56px;
+    --values-64px: 64px;
+    --values-80px: 80px;
+    --values-96px: 96px;
+    --values-112px: 112px;
+    --values-128px: 128px;
+
+    /* ---------------- TOKENIZATION / VALUE ---------------- */
+  
+    /* Table */
+    --token-table-header: var(--green-300);
+    --token-table-bg: var(--neutral-700);
+  
+    /* Text */
+    --token-text-primary-alt: var(--neutral-950);
+    --token-text-green: var(--green-300);
+    --token-text-primary: var(--neutral-25);
+    --token-text-secondary: var(--neutral-300);
+  
+    /* Main */
+    --token-stroke-primary: var(--neutral-500);
+    --token-icon-green: var(--green-300);
+    --token-stroke-green: var(--green-300);
+    --token-icon-primary: var(--neutral-50);
+    --token-icon-inactive: var(--neutral-400);
+    --token-popup-card-bg: var(--neutral-800);
+    --token-surface: var(--neutral-900);
+    --token-multioption-card-bg: var(--neutral-700);
+  
+    /* Button */
+    --token-button-primary: var(--green-300);
+    --token-button-secondary: var(--neutral-700);
+  
+    /* Base */
+    --token-base-red: var(--basic-red);
+  
+    /* Spacing */
+    --token-spacing-4pt: var(--values-4px);
+    --token-spacing-8pt: var(--values-8px);
+    --token-spacing-12pt: var(--values-12px);
+    --token-spacing-16pt: var(--values-16px);
+    --token-spacing-20pt: var(--values-20px);
+    --token-spacing-24pt: var(--values-24px);
+    --token-spacing-0pt: var(--values-0px);
+    --token-spacing-32pt: var(--values-32px);
+    --token-spacing-40pt: var(--values-40px);
+    --token-spacing-48pt: var(--values-48px);
+    --token-spacing-64pt: var(--values-64px);
+    --token-spacing-80pt: var(--values-80px);
+    --token-spacing-112pt: var(--values-112px);
+  
+    /* Corner Radius */
+    --token-corner-radius-12pt: var(--values-12px);
+    --token-corner-radius-8pt: var(--values-8px);
+    --token-corner-radius-4pt: var(--values-4px);
+    --token-corner-radius-0pt: var(--values-0px);
+    --token-corner-radius-16pt: var(--values-16px);
+    --token-corner-radius-24pt: var(--values-24px);
+    --token-corner-radius-20pt: var(--values-20px);
+}
+  
