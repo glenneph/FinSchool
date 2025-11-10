@@ -8,5 +8,10 @@ export default defineConfig({
     vue(),
     vuetify({ autoImport: true })
   ],
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets'
+  }
 })
 

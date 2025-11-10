@@ -18,6 +18,10 @@ const routes = [
     path: '/health-insurance',
     name: 'HealthInsurance',
     component: HealthInsurance
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 
