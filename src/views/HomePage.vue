@@ -23,15 +23,6 @@
             </div>
           </div>
         </div>
-        <AppointmentCard
-          :doctor-name="appointmentData.doctorName"
-          :specialty="appointmentData.specialty"
-          :date-time="appointmentData.dateTime"
-          :image="appointmentData.image"
-          :guarantee-text="appointmentData.guaranteeText"
-          @close="handleAppointmentClose"
-          class="appointment-card-wrapper"
-        />
       </div>
     </div>
   </div>
@@ -39,25 +30,16 @@
 
 <script>
 import TopNav from '../components/common/TopNav.vue'
-import AppointmentCard from '../components/AppointmentCard.vue'
 
 export default {
   name: 'HomePage',
   components: {
-    TopNav,
-    AppointmentCard
+    TopNav
   },
   data() {
     return {
       healthInsuranceImage: '/assets/health-insurance-calculator-banner.webp',
-      emiCalculatorImage: '/assets/emi-calculator-banner.webp',
-      appointmentData: {
-        doctorName: 'Dr. Phyio Myint',
-        specialty: 'Obstetrics, & Gynaecology',
-        dateTime: new Date('2024-11-11T14:00:00'),
-        image: null,
-        guaranteeText: 'ON TIME GURANTEE'
-      }
+      emiCalculatorImage: '/assets/emi-calculator-banner.webp'
     }
   },
   methods: {
@@ -66,10 +48,6 @@ export default {
     },
     navigateToCalculator() {
       this.$router.push('/calculator')
-    },
-    handleAppointmentClose() {
-      // Handle appointment card close event
-      console.log('Appointment card closed')
     }
   }
 }
