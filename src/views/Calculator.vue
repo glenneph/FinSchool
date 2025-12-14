@@ -26,6 +26,7 @@
               class="loan-name-input"
               ref="nameInput"
               autofocus
+              size="1"
             />
             <span 
               v-else
@@ -53,7 +54,7 @@
                   -{{ item.interestSavedPercent }}%
                 </div>
               </div>
-              <div v-if="item.interestSaved > 0" class="savings-subtext">
+              <div v-if="item.interestSaved > 1" class="savings-subtext">
                 you'll save <span class="savings-highlight">{{ formatCurrency(item.interestSaved) }}</span>
               </div>
             </div>
@@ -92,8 +93,16 @@
         </v-data-table>
       </div>
 
-      <!-- Check Prepayments Button -->
-      <Button @click="handlePrepaymentClick" />
+      <!-- Prepayment Buttons Container -->
+      <div class="prepayment-buttons-container">
+        <!-- Check Prepayments Button -->
+        <Button @click="handlePrepaymentClick" />
+        
+        <!-- Reset Prepayments Button -->
+        <Button v-if="prepaymentResults" variant="Secondary" @click="resetPrepayments">
+          Reset Prepayments
+        </Button>
+      </div>
     </div>
 
     <!-- Prepayment Modal -->
@@ -103,24 +112,8 @@
       @close="showPrepaymentModal = false"
       @submit="handlePrepaymentSubmit"
     />
-    
-    <!-- Loan Amortization Tables (shown after prepayment calculation) -->
-    <div v-if="prepaymentResults" class="loan-amortizations-container">
-      <LoanAmortization 
-        v-for="loan in loans" 
-        :key="loan.id"
-        :loan="loan"
-        :loan-result="getLoanResult(loan.id)"
-      />
-    </div>
-    
-    <!-- Reset Prepayments Button -->
-    <div v-if="prepaymentResults" class="reset-prepayments-container">
-      <button class="reset-prepayments-btn" @click="resetPrepayments">
-        Reset Prepayments
-      </button>
-    </div>
   </div>
+
 </template>
 
 <script>
@@ -128,8 +121,7 @@ import TopNav from '../components/common/TopNav.vue'
 import Button from '../components/common/Button.vue'
 import PrepaymentModalStep1 from '../components/PrepaymentModal-Step1.vue'
 import OverallSavings from '../components/OverallSavings.vue'
-import LoanAmortization from '../components/LoanAmortization.vue'
-import { calculateMultiLoanPrepayments, formatToIndianCurrency } from '../utils/multiLoanPrepayment.js'
+import { calculateMultiLoanPrepayments, formatToIndianCurrency, parseCurrency, parseInterest, parseTenure, sortLoansByMethod } from '../utils/multiLoanPrepayment.js'
 
 export default {
   name: 'Calculator',
@@ -137,8 +129,7 @@ export default {
     TopNav,
     Button,
     PrepaymentModalStep1,
-    OverallSavings,
-    LoanAmortization
+    OverallSavings
   },
   data() {
     return {
@@ -161,36 +152,120 @@ export default {
     }
   },
   mounted() {
+    // Test if imports are working
+    console.log('=== Testing Imports ===')
+    console.log('parseCurrency:', typeof parseCurrency)
+    console.log('parseInterest:', typeof parseInterest)
+    console.log('parseTenure:', typeof parseTenure)
+    console.log('formatToIndianCurrency:', typeof formatToIndianCurrency)
+    
+    // Test parsing
+    console.log('Test parseCurrency("₹14,54,615"):', parseCurrency('₹14,54,615'))
+    console.log('Test parseInterest("18%"):', parseInterest('18%'))
+    console.log('Test parseTenure("15 yrs"):', parseTenure('15 yrs'))
+    
     // Load saved loans from localStorage
     this.loadSavedLoans()
     
+    // Load prepayment results from localStorage to persist across navigation
+    this.loadPrepaymentResults()
+    
     // If no loans exist, add a default one for demo
     if (this.loans.length === 0) {
-      this.loans = [
-        { 
-          id: Date.now(),
-          name: 'Housing Loan',
-          principal: '₹14,54,615',
-          interest: '18%',
-          emi: '₹19,566',
-          tenure: '15 yrs'
-        }
-      ]
+      console.log('No loans found, creating default loan')
+      const defaultLoan = { 
+        id: Date.now(),
+        name: 'Housing Loan',
+        principal: '₹14,54,615',
+        interest: '18%',
+        emi: '₹19,566',
+        tenure: '15 yrs'
+      }
+      defaultLoan.interestAmount = this.calculateInterestAmount(defaultLoan)
+      console.log('Default loan created:', defaultLoan)
+      this.loans = [defaultLoan]
     }
   },
   methods: {
+    calculateInterestAmount(loan) {
+      try {
+        console.log('calculateInterestAmount called for:', loan.name)
+        console.log('Loan data:', JSON.stringify(loan, null, 2))
+        
+        // Parse loan values using imported functions
+        const principal = parseCurrency(loan.principal)
+        const interestRate = parseInterest(loan.interest)
+        const tenure = parseTenure(loan.tenure)
+        
+        console.log('Parsed values:', { principal, interestRate, tenure })
+        
+        if (!principal || !interestRate || !tenure) {
+          console.log('Missing required values, returning -')
+          return '-'
+        }
+        
+        // Calculate EMI
+        const r = (interestRate / 12) / 100
+        const n = Math.round(tenure * 12)
+        
+        console.log('Calculation params:', { r, n })
+        
+        let emi = 0
+        if (r > 0 && n > 0) {
+          const pow = Math.pow(1 + r, n)
+          if (isFinite(pow) && (pow - 1) !== 0) {
+            emi = (principal * r * pow) / (pow - 1)
+          }
+        } else {
+          emi = principal / Math.max(1, n)
+        }
+        
+        console.log('Calculated EMI:', emi)
+        
+        // Calculate total interest
+        const totalInterest = (emi * n) - principal
+        
+        console.log('Total Interest:', totalInterest)
+        
+        const formatted = formatToIndianCurrency(totalInterest)
+        console.log('Formatted Interest Amount:', formatted)
+        
+        return formatted
+      } catch (error) {
+        console.error('Error calculating interest:', error)
+        console.error('Error stack:', error.stack)
+        return '-'
+      }
+    },
     loadSavedLoans() {
       try {
+        console.log('=== Loading Saved Loans ===')
         const savedLoans = JSON.parse(localStorage.getItem('savedLoans') || '[]')
+        console.log('Raw saved loans:', savedLoans)
+        
         if (savedLoans.length > 0) {
-          // Ensure all loans have IDs
-          this.loans = savedLoans.map(loan => ({
-            ...loan,
-            id: loan.id || Date.now() + Math.random()
-          }))
+          // Use saved interest amount, or calculate as fallback for old loans
+          this.loans = savedLoans.map(loan => {
+            console.log('Processing loan:', loan.name)
+            console.log('Saved interestAmount:', loan.interestAmount)
+            
+            // Use the saved interestAmount if available, otherwise calculate it
+            const interestAmount = loan.interestAmount || this.calculateInterestAmount(loan)
+            
+            console.log('Final interestAmount for', loan.name, ':', interestAmount)
+            
+            return {
+              ...loan,
+              id: loan.id || Date.now() + Math.random(),
+              interestAmount: interestAmount
+            }
+          })
+          console.log('=== Final loaded loans ===')
+          console.log(JSON.stringify(this.loans, null, 2))
         }
       } catch (error) {
         console.error('Error loading saved loans:', error)
+        console.error('Error stack:', error.stack)
       }
     },
     startEdit(item) {
@@ -229,6 +304,64 @@ export default {
     editLoan(item) {
       // Store the loan data for editing in localStorage
       localStorage.setItem('editingLoanData', JSON.stringify(item))
+      
+      // Store prepayment context if prepayment results exist
+      if (this.prepaymentResults && this.prepaymentResults.loanResults) {
+        const loanResult = this.prepaymentResults.loanResults.find(r => r.id === item.id)
+        
+        if (loanResult) {
+          // Determine loan position in sorted sequence
+          const sortedLoans = sortLoansByMethod(this.loans, this.prepaymentResults.method)
+          const loanPosition = sortedLoans.findIndex(l => l.id === item.id) + 1
+          
+          // Calculate cumulative months from previous loans
+          let previousLoansMonths = 0
+          for (let i = 0; i < loanPosition - 1; i++) {
+            const prevLoan = sortedLoans[i]
+            const prevLoanResult = this.prepaymentResults.loanResults.find(r => r.id === prevLoan.id)
+            if (prevLoanResult && prevLoanResult.schedule) {
+              previousLoansMonths += prevLoanResult.schedule.length
+            }
+          }
+          
+          // Extract FULL prepayment schedule
+          // No index shifting needed anymore because the engine (multiLoanPrepayment.js)
+          // now correctly generates schedules starting from Today (Date 0) with '0' prepayments
+          // for the months where the money was used by higher priority loans.
+          const prepaymentSchedule = []
+          if (loanResult.schedule) {
+            loanResult.schedule.forEach((entry, index) => {
+              if (entry.prepayment > 0) {
+                prepaymentSchedule.push({
+                  monthIndex: index,
+                  amount: entry.prepayment,
+                  year: entry.year,
+                  month: entry.month
+                })
+              }
+            })
+          }
+          
+          // Store prepayment context
+          const prepaymentContext = {
+            loanId: item.id,
+            loanPosition: loanPosition,
+            prepaymentMethod: this.prepaymentResults.method,
+            prepaymentSchedule: prepaymentSchedule,
+            previousLoansMonths: 0, // No longer relevant for timeline
+            monthsBeforePrepaymentsStart: 0, // No longer forced wait
+            loanResult: loanResult,
+            startDate: new Date().toISOString()
+          }
+          
+          localStorage.setItem('prepaymentContext', JSON.stringify(prepaymentContext))
+          console.log('Stored prepayment context:', prepaymentContext)
+        }
+      } else {
+        // Clear any existing prepayment context if no prepayments exist
+        localStorage.removeItem('prepaymentContext')
+      }
+      
       // Redirect to calculator page
       window.location.href = '/calculator/index.html'
     },
@@ -237,35 +370,79 @@ export default {
       this.showPrepaymentModal = true
     },
     handlePrepaymentSubmit(data) {
-      console.log('Prepayment data submitted:', data)
+      console.log('=== CALCULATOR: Received prepayment submission ===');
+      console.log('Data received:', JSON.stringify(data, null, 2));
+      console.log('Current loans:', this.loans.length);
+      console.log('Loans data:', JSON.stringify(this.loans, null, 2));
       
-      // Calculate multi-loan prepayments
-      const results = calculateMultiLoanPrepayments(this.loans, data, data.method)
-      
-      if (results) {
-        this.prepaymentResults = results
-        
-        // Update loans with calculated savings data
-        this.loans = this.loans.map((loan) => {
-          const result = results.loanResults.find(r => r.id === loan.id)
-          if (result) {
-            return {
-              ...loan,
-              interestAmount: formatToIndianCurrency(result.newInterest),
-              interestSaved: result.interestSaved,
-              interestSavedPercent: result.originalInterest > 0 
-                ? Math.round((result.interestSaved / result.originalInterest) * 100) 
-                : 0,
-              tenureSavedMonths: result.tenureSavedMonths,
-              tenureSavedYears: Math.floor(result.tenureSavedMonths / 12),
-              tenureSavedRemainingMonths: result.tenureSavedMonths % 12
-            }
-          }
-          return loan
-        })
+      // Validate custom prepayments
+      if (data.activeTab === 'custom' && (!data.prepaymentRows || data.prepaymentRows.length === 0)) {
+        console.warn('Validation failed: No custom prepayment rows');
+        alert('Please add at least one prepayment entry in Custom prepayments.')
+        return
       }
       
-      this.showPrepaymentModal = false
+      console.log('Starting calculation...');
+      console.log('Active tab:', data.activeTab);
+      console.log('Selected method:', data.method);
+      
+      // Calculate multi-loan prepayments (works for both custom and 16 EMI rule)
+      const results = calculateMultiLoanPrepayments(this.loans, data, data.method)
+      
+      console.log('Calculation completed. Results:', results);
+      
+      if (!results || !results.loanResults || results.loanResults.length === 0) {
+        console.error('=== CALCULATION FAILED ===');
+        console.error('Results object:', results);
+        console.error('Has loanResults?', !!results?.loanResults);
+        console.error('LoanResults length:', results?.loanResults?.length);
+        alert('Failed to calculate prepayments. Please check your loan data and try again.')
+        console.error('Prepayment calculation failed:', results)
+        return // Don't close modal if calculation failed
+      }
+      
+      console.log('=== CALCULATION SUCCEEDED ===');
+      console.log('Number of loan results:', results.loanResults.length);
+      console.log('Overall savings:', results.overallSavings);
+      
+      this.prepaymentResults = results
+      
+      // Update loans with calculated savings data immediately for UI feedback
+      const sortedLoans = sortLoansByMethod(this.loans, data.method)
+      this.loans = sortedLoans.map((loan) => {
+        const result = results.loanResults.find(r => r.id === loan.id)
+        if (result) {
+          return {
+            ...loan,
+            interestAmount: formatToIndianCurrency(result.newInterest),
+            interestSaved: result.interestSaved,
+            interestSavedPercent: result.originalInterest > 0 
+              ? Math.round((result.interestSaved / result.originalInterest) * 100) 
+              : 0,
+            tenureSavedMonths: result.tenureSavedMonths,
+            tenureSavedYears: Math.floor(result.tenureSavedMonths / 12),
+            tenureSavedRemainingMonths: result.tenureSavedMonths % 12
+          }
+        }
+        return loan
+      })
+
+      // Defer heavy localStorage writes to next tick to prevent UI blocking
+      setTimeout(() => {
+        try {
+          // Save prepayment results
+          localStorage.setItem('prepaymentResults', JSON.stringify(results))
+          
+          // Save updated loans
+          localStorage.setItem('savedLoans', JSON.stringify(this.loans))
+          
+          console.log('Background: Saved results to localStorage');
+        } catch (e) {
+          console.error('Background Save Failed:', e);
+        }
+      }, 50);
+
+      console.log('=== UI UPDATED ===');
     },
     addLoan() {
       console.log('Add Loan clicked!')
@@ -281,6 +458,8 @@ export default {
         localStorage.setItem('savedLoans', JSON.stringify(this.loans))
         // Clear prepayment results if deleting a loan
         this.prepaymentResults = null
+        localStorage.removeItem('prepaymentResults')
+        localStorage.removeItem('prepaymentContext')
       }
     },
     formatCurrency(num) {
@@ -296,11 +475,54 @@ export default {
     },
     resetPrepayments() {
       this.prepaymentResults = null
-      // Reset loan data to remove savings info
+      // Clear prepayment results from localStorage
+      localStorage.removeItem('prepaymentResults')
+      localStorage.removeItem('prepaymentContext')
+      
+      // Reset loan data to remove savings info but keep the original interestAmount
       this.loans = this.loans.map(loan => {
-        const { interestAmount, interestSaved, interestSavedPercent, tenureSavedMonths, tenureSavedYears, tenureSavedRemainingMonths, ...cleanLoan } = loan
+        const { interestSaved, interestSavedPercent, tenureSavedMonths, tenureSavedYears, tenureSavedRemainingMonths, ...cleanLoan } = loan
+        // Recalculate the original interest amount (without prepayments)
+        cleanLoan.interestAmount = this.calculateInterestAmount(loan)
         return cleanLoan
       })
+      
+      // Save updated loans to localStorage
+      localStorage.setItem('savedLoans', JSON.stringify(this.loans))
+    },
+    loadPrepaymentResults() {
+      try {
+        const savedResults = localStorage.getItem('prepaymentResults')
+        if (savedResults) {
+          const results = JSON.parse(savedResults)
+          this.prepaymentResults = results
+          
+          // Restore loan savings data from prepayment results
+          if (results.loanResults) {
+            this.loans = this.loans.map((loan) => {
+              const result = results.loanResults.find(r => r.id === loan.id)
+              if (result) {
+                return {
+                  ...loan,
+                  interestAmount: formatToIndianCurrency(result.newInterest),
+                  interestSaved: result.interestSaved,
+                  interestSavedPercent: result.originalInterest > 0 
+                    ? Math.round((result.interestSaved / result.originalInterest) * 100) 
+                    : 0,
+                  tenureSavedMonths: result.tenureSavedMonths,
+                  tenureSavedYears: Math.floor(result.tenureSavedMonths / 12),
+                  tenureSavedRemainingMonths: result.tenureSavedMonths % 12
+                }
+              }
+              return loan
+            })
+          }
+          
+          console.log('Loaded prepayment results from localStorage')
+        }
+      } catch (error) {
+        console.error('Error loading prepayment results:', error)
+      }
     },
     getLoanResult(loanId) {
       if (!this.prepaymentResults || !this.prepaymentResults.loanResults) return null;
@@ -469,10 +691,21 @@ export default {
   border: none;
   padding: 4px 8px;
   outline: none;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
+  /* Match the normal cell width */
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
   box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keep the first column constrained without allowing the input to stretch it */
+:deep(.v-data-table__td:first-child) {
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .cell-value {
@@ -575,34 +808,11 @@ export default {
   color: var(--token-text-green);
 }
 
-/* Loan Amortizations Container */
-.loan-amortizations-container {
-  padding: 0 var(--token-spacing-80pt);
+/* Prepayment Buttons */
+.prepayment-buttons-container {
   display: flex;
-  flex-direction: column;
-  gap: var(--token-spacing-32pt);
-}
-
-/* Reset Prepayments Button */
-.reset-prepayments-container {
-  padding: 0 var(--token-spacing-80pt) var(--token-spacing-64pt);
-}
-
-.reset-prepayments-btn {
-  background-color: var(--token-button-primary);
-  padding: var(--token-spacing-16pt) var(--token-spacing-20pt);
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-typeface-display);
-  font-weight: var(--font-weight-500);
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-lg);
-  color: var(--token-text-primary-alt);
-  transition: opacity 0.2s ease;
-}
-
-.reset-prepayments-btn:hover {
-  opacity: 0.8;
+  gap: var(--token-spacing-24pt);
+  padding: var(--token-spacing-0pt);
 }
 
 </style>

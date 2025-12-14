@@ -5,8 +5,8 @@
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <!-- Green background frame (visible only in hover state) -->
-    <div v-if="isHovered" class="button-background"></div>
+    <!-- Background frame (visible only in hover state for Primary, or as shadow for Secondary) -->
+    <div v-if="showBackground" class="button-background" :class="backgroundClass"></div>
     
     <!-- Main button -->
     <button 
@@ -22,6 +22,13 @@
 <script>
 export default {
   name: 'Button',
+  props: {
+    variant: {
+      type: String,
+      default: 'Primary',
+      validator: (value) => ['Primary', 'Secondary'].includes(value)
+    }
+  },
   data() {
     return {
       isHovered: false
@@ -29,7 +36,20 @@ export default {
   },
   computed: {
     buttonClass() {
-      return this.isHovered ? 'btn-hover' : 'btn-default'
+      const variant = this.variant.toLowerCase();
+      const state = this.isHovered ? 'hover' : 'default';
+      return `btn-${variant}-${state}`;
+    },
+    backgroundClass() {
+      return this.variant === 'Secondary' && this.isHovered ? 'background-shadow' : '';
+    },
+    showBackground() {
+      if (this.variant === 'Primary') {
+        return this.isHovered;
+      } else if (this.variant === 'Secondary') {
+        return this.isHovered;
+      }
+      return false;
     }
   },
   methods: {
@@ -46,7 +66,7 @@ export default {
   width: fit-content;
 }
 
-/* Green background frame for hover state */
+/* Background frame for Primary hover (offset green) */
 .button-background {
   position: absolute;
   top: 8px;
@@ -55,6 +75,11 @@ export default {
   height: 100%;
   background-color: var(--token-button-primary);
   z-index: 0;
+}
+
+/* Background frame for Secondary hover (offset dark) */
+.button-background.background-shadow {
+  background-color: var(--token-button-secondary);
 }
 
 /* Base button styles */
@@ -76,16 +101,30 @@ export default {
   z-index: 1;
 }
 
-/* Default state */
-.btn-default {
+/* PRIMARY VARIANT */
+/* Primary - Default state */
+.btn-primary-default {
   background-color: var(--token-button-primary);
   color: var(--token-text-primary-alt);
 }
 
-/* Hover state */
-.btn-hover {
+/* Primary - Hover state */
+.btn-primary-hover {
   background-color: var(--token-button-secondary);
   color: var(--token-text-primary);
+}
+
+/* SECONDARY VARIANT */
+/* Secondary - Default state */
+.btn-secondary-default {
+  background-color: var(--token-button-secondary);
+  color: var(--token-text-primary);
+}
+
+/* Secondary - Hover state */
+.btn-secondary-hover {
+  background-color: var(--token-button-primary);
+  color: var(--token-text-primary-alt);
 }
 
 /* Active state */

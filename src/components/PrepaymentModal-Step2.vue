@@ -60,11 +60,14 @@ export default {
   },
   methods: {
     closeModal() {
+      console.log('=== STEP 2: Close clicked (going back to Step 1) ===');
       this.$emit('close')
     },
     handleSubmit() {
+      console.log('=== STEP 2: Submit clicked ===');
+      console.log('Selected Method:', this.selectedMethod);
       this.$emit('submit', this.selectedMethod)
-      console.log('Submit clicked with method:', this.selectedMethod)
+      console.log('Emitted submit event with method:', this.selectedMethod);
     }
   }
 }
