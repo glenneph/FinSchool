@@ -1,7 +1,12 @@
 <template>
-  <div v-if="loanResult && loanResult.schedule" class="loan-amortization">
+  <div
+    v-if="loanResult && loanResult.schedule"
+    class="loan-amortization"
+  >
     <div class="amortization-header">
-      <h3 class="amortization-title">{{ loan.name }} - Amortization Schedule</h3>
+      <h3 class="amortization-title">
+        {{ loan.name }} - Amortization Schedule
+      </h3>
     </div>
     
     <div class="amortization-table-wrapper">
@@ -22,7 +27,7 @@
                   alt="Toggle" 
                   class="chevron-icon"
                   :class="{ 'rotated': expandedYear === year }"
-                />
+                >
               </div>
             </td>
           </tr>
@@ -37,17 +42,24 @@
                       <th>Month</th>
                       <th>To Principal</th>
                       <th>To Interest</th>
-                      <th v-if="hasPrepayments">Pre-payment</th>
+                      <th v-if="hasPrepayments">
+                        Pre-payment
+                      </th>
                       <th>Total Payment</th>
                       <th>Balance</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(row, index) in expandedMonths" :key="index">
+                    <tr
+                      v-for="(row, index) in expandedMonths"
+                      :key="index"
+                    >
                       <td>{{ row.month }}</td>
                       <td>{{ formatCurrency(row.principal) }}</td>
                       <td>{{ formatCurrency(row.interest) }}</td>
-                      <td v-if="hasPrepayments">{{ formatCurrency(row.prepayment) }}</td>
+                      <td v-if="hasPrepayments">
+                        {{ formatCurrency(row.prepayment) }}
+                      </td>
                       <td>{{ formatCurrency(row.total) }}</td>
                       <td>{{ formatCurrency(row.balance) }}</td>
                     </tr>
@@ -57,7 +69,9 @@
                       <td>Summary</td>
                       <td>{{ formatCurrency(yearSummary.principal) }}</td>
                       <td>{{ formatCurrency(yearSummary.interest) }}</td>
-                      <td v-if="hasPrepayments">{{ formatCurrency(yearSummary.prepayment) }}</td>
+                      <td v-if="hasPrepayments">
+                        {{ formatCurrency(yearSummary.prepayment) }}
+                      </td>
                       <td>{{ formatCurrency(yearSummary.total) }}</td>
                       <td>-</td>
                     </tr>

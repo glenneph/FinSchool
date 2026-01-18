@@ -6,7 +6,11 @@
     @mouseleave="isHovered = false"
   >
     <!-- Background frame (visible only in hover state for Primary, or as shadow for Secondary) -->
-    <div v-if="showBackground" class="button-background" :class="backgroundClass"></div>
+    <div
+      v-if="showBackground"
+      class="button-background"
+      :class="backgroundClass"
+    />
     
     <!-- Main button -->
     <button 

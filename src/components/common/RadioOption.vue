@@ -10,15 +10,17 @@
         :src="radioSelectedIcon" 
         alt="Selected" 
         class="radio-option__icon"
-      />
+      >
       <img 
         v-else 
         :src="radioIcon" 
         alt="Not selected" 
         class="radio-option__icon"
-      />
+      >
     </div>
-    <p class="radio-option__label">{{ label }}</p>
+    <p class="radio-option__label">
+      {{ label }}
+    </p>
   </div>
 </template>
 

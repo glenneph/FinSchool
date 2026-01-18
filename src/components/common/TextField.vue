@@ -4,11 +4,11 @@
       <div class="text-field-content">
         <input
           :value="modelValue"
-          @input="$emit('update:modelValue', $event.target.value)"
           :placeholder="placeholder"
           class="text-field-input"
           :class="{ 'text-field-input--placeholder': !hasValue }"
-        />
+          @input="$emit('update:modelValue', $event.target.value)"
+        >
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 // Multi-loan prepayment calculation utilities
 // Based on script.js logic, adapted for multiple loans
 
-const INFLATION_RATE = 5.85;
+
 
 /**
  * Parse loan amount from formatted string (₹14,54,615) to number
@@ -141,25 +141,7 @@ function sortLoansByMethod(loans, method) {
 /**
  * Apply prepayments to a single loan's schedule
  */
-function applyPrepaymentsToLoan(loanSchedule, prepayments, loanId) {
-  const scheduleWithPrepayments = [...loanSchedule];
 
-  prepayments.forEach(prep => {
-    if (prep.loanId !== loanId) return;
-
-    // Find the matching month in the schedule
-    const monthEntry = scheduleWithPrepayments.find(entry =>
-      entry.monthIndex === prep.monthIndex && entry.balance > 0
-    );
-
-    if (monthEntry) {
-      monthEntry.prepayment = Math.min(prep.amount, monthEntry.balance);
-    }
-  });
-
-  // Recalculate schedule with prepayments
-  return recalculateScheduleWithPrepayments(scheduleWithPrepayments);
-}
 
 /**
  * Recalculate loan schedule after prepayments are added

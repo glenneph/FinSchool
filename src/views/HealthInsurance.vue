@@ -3,7 +3,11 @@
     <TopNav />
     <div class="container">
       <div class="cards-row">
-        <QuestionCard label="City you live in" :icon="locationIcon" width="316px">
+        <QuestionCard
+          label="City you live in"
+          :icon="locationIcon"
+          width="316px"
+        >
           <TextField 
             v-model="selectedCity"
             placeholder="Enter Location"
@@ -14,20 +18,43 @@
       
       <div class="result-card">
         <div class="result-header">
-          <p class="result-title">Result</p>
+          <p class="result-title">
+            Result
+          </p>
         </div>
         <div class="result-content">
-          <div v-if="isLoading" class="loading-state">
-            <p class="result-text">Generating health insurance recommendations...</p>
+          <div
+            v-if="isLoading"
+            class="loading-state"
+          >
+            <p class="result-text">
+              Generating health insurance recommendations...
+            </p>
           </div>
-          <div v-else-if="error" class="error-state">
-            <p class="result-text error-text">{{ error }}</p>
+          <div
+            v-else-if="error"
+            class="error-state"
+          >
+            <p class="result-text error-text">
+              {{ error }}
+            </p>
           </div>
-          <div v-else-if="aiResponse" class="ai-response">
-            <div class="result-text" v-html="formatResponse(aiResponse)"></div>
+          <div
+            v-else-if="aiResponse"
+            class="ai-response"
+          >
+            <div
+              class="result-text"
+              v-html="formatResponse(aiResponse)"
+            />
           </div>
-          <div v-else class="placeholder-state">
-            <p class="result-text">[AI Generate Content]</p>
+          <div
+            v-else
+            class="placeholder-state"
+          >
+            <p class="result-text">
+              [AI Generate Content]
+            </p>
           </div>
         </div>
       </div>
@@ -74,6 +101,12 @@ export default {
           this.fetchAIResponse(newValue.trim())
         }, 1000)
       }
+    }
+  },
+  beforeUnmount() {
+    // Clear debounce timer on component unmount
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer)
     }
   },
   methods: {
@@ -333,12 +366,6 @@ Please format your response clearly with the cost and cover amount prominently d
       } else {
         return amount.toLocaleString('en-IN')
       }
-    }
-  },
-  beforeUnmount() {
-    // Clear debounce timer on component unmount
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer)
     }
   }
 }

@@ -4,7 +4,12 @@
     <div class="card-top-section">
       <!-- Image Placeholder -->
       <div class="image-placeholder">
-        <img v-if="image" :src="image" :alt="doctorName" class="doctor-image" />
+        <img
+          v-if="image"
+          :src="image"
+          :alt="doctorName"
+          class="doctor-image"
+        >
       </div>
 
       <!-- Content Section -->
@@ -18,12 +23,20 @@
         <div class="doctor-info-row">
           <!-- Doctor Details -->
           <div class="doctor-details">
-            <p class="doctor-name">{{ doctorName }}</p>
-            <p class="doctor-specialty">{{ specialty }}</p>
+            <p class="doctor-name">
+              {{ doctorName }}
+            </p>
+            <p class="doctor-specialty">
+              {{ specialty }}
+            </p>
           </div>
 
           <!-- Close Button -->
-          <button class="close-button" @click="handleClose" aria-label="Close">
+          <button
+            class="close-button"
+            aria-label="Close"
+            @click="handleClose"
+          >
             <svg 
               width="24" 
               height="24" 
@@ -46,7 +59,7 @@
     </div>
 
     <!-- Divider -->
-    <div class="divider"></div>
+    <div class="divider" />
 
     <!-- Bottom Section: Date & Time -->
     <div class="card-bottom-section">

@@ -1,15 +1,24 @@
 <template>
-  <div class="question-card" :style="{ width: width }">
+  <div
+    class="question-card"
+    :style="{ width: width }"
+  >
     <div class="question-header">
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img :src="icon" alt="Icon" class="question-icon" />
+          <img
+            :src="icon"
+            alt="Icon"
+            class="question-icon"
+          >
         </div>
       </div>
-      <p class="question-text">{{ label }}</p>
+      <p class="question-text">
+        {{ label }}
+      </p>
     </div>
     <div class="question-content">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

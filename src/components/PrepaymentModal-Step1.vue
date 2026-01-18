@@ -1,7 +1,11 @@
 <template>
   <div>
     <!-- Step 1: Prepayment Modal -->
-    <div v-if="isOpen && !showMethodModal" class="modal-overlay" @click.self="closeModal">
+    <div
+      v-if="isOpen && !showMethodModal"
+      class="modal-overlay"
+      @click.self="closeModal"
+    >
       <div class="modal-card">
         <!-- Header using PopUp component -->
         <PopUp 
@@ -32,41 +36,55 @@
           <!-- Tab Content -->
           <div class="tab-content">
             <!-- Custom Tab -->
-            <div v-if="activeTab === 'custom'" class="prepayment-table-container">
+            <div
+              v-if="activeTab === 'custom'"
+              class="prepayment-table-container"
+            >
               <table class="details-table">
                 <thead>
                   <tr>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th style="text-align: right;">Prepayment Amount</th>
-                    <th></th>
+                    <th style="text-align: right;">
+                      Prepayment Amount
+                    </th>
+                    <th />
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(row, index) in prepaymentRows" :key="row.id">
+                  <tr
+                    v-for="(row, index) in prepaymentRows"
+                    :key="row.id"
+                  >
                     <td>
                       <div class="date-input-wrapper">
                         <div class="flatpickr-wrapper">
                           <input 
-                            type="text" 
-                            :ref="'startPicker_' + index"
+                            :ref="'startPicker_' + index" 
+                            type="text"
                             class="custom-date-input flatpickr-input"
                             placeholder="Select Date"
                           >
-                          <img :src="calendarIcon" class="calendar-icon-overlay" />
+                          <img
+                            :src="calendarIcon"
+                            class="calendar-icon-overlay"
+                          >
                         </div>
                       </div>
                     </td>
                     <td>
                       <div class="date-input-wrapper">
-                         <div class="flatpickr-wrapper">
+                        <div class="flatpickr-wrapper">
                           <input 
-                            type="text" 
-                            :ref="'endPicker_' + index"
+                            :ref="'endPicker_' + index" 
+                            type="text"
                             class="custom-date-input flatpickr-input"
                             placeholder="Select Date"
                           >
-                          <img :src="calendarIcon" class="calendar-icon-overlay" />
+                          <img
+                            :src="calendarIcon"
+                            class="calendar-icon-overlay"
+                          >
                         </div>
                       </div>
                     </td>
@@ -74,8 +92,8 @@
                       <div class="amount-input-wrapper">
                         <span class="currency-symbol">₹</span>
                         <input 
-                          type="number" 
                           v-model="row.amount" 
+                          type="number" 
                           class="custom-amount-input" 
                           placeholder="Enter Amount"
                         >
@@ -88,24 +106,31 @@
                         class="delete-icon"
                         :class="{ 'disabled': index === 0 }"
                         @click="index !== 0 && deleteRow(index)"
-                      />
+                      >
                     </td>
                   </tr>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="4">
-                            <button id="add-prepayment-row-btn" class="add-row-btn" @click="addRow">
-                                <span class="material-symbols-outlined">+</span> Date
-                            </button>
-                        </td>
-                    </tr>
+                  <tr>
+                    <td colspan="4">
+                      <button
+                        id="add-prepayment-row-btn"
+                        class="add-row-btn"
+                        @click="addRow"
+                      >
+                        <span class="material-symbols-outlined">+</span> Date
+                      </button>
+                    </td>
+                  </tr>
                 </tfoot>
               </table>
             </div>
 
             <!-- Templates Tab -->
-            <div v-if="activeTab === 'templates'" class="templates-content">
+            <div
+              v-if="activeTab === 'templates'"
+              class="templates-content"
+            >
               <RadioOption 
                 label="16 EMI Rule"
                 :is-active="selectedTemplate === '16-emi-rule'"

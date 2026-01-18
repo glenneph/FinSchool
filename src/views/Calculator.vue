@@ -3,7 +3,10 @@
     <TopNav />
     
     <!-- Overall Savings (shown after prepayment calculation) -->
-    <div v-if="prepaymentResults" class="overall-savings-container">
+    <div
+      v-if="prepaymentResults"
+      class="overall-savings-container"
+    >
       <OverallSavings :savings="prepaymentResults.overallSavings" />
     </div>
     
@@ -17,84 +20,103 @@
           class="custom-loan-table"
           @click:row="handleRowClick"
         >
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             <input 
               v-if="editingLoan === item.id"
+              ref="nameInput"
               v-model="editingName"
+              class="loan-name-input"
+              autofocus
+              size="1"
               @blur="saveRename(item)"
               @keyup.enter="saveRename(item)"
               @keyup.esc="cancelEdit"
               @click.stop
-              class="loan-name-input"
-              ref="nameInput"
-              autofocus
-              size="1"
-            />
+            >
             <span 
               v-else
               class="loan-name editable"
-              @click.stop="startEdit(item)"
               :title="'Click to rename'"
+              @click.stop="startEdit(item)"
             >
               {{ item.name }}
             </span>
           </template>
           
-          <template v-slot:item.principal="{ item }">
+          <template #item.principal="{ item }">
             <span class="cell-value">{{ item.principal }}</span>
           </template>
           
-          <template v-slot:item.interest="{ item }">
+          <template #item.interest="{ item }">
             <span class="cell-value">{{ item.interest }}</span>
           </template>
           
-          <template v-slot:item.interestAmount="{ item }">
+          <template #item.interestAmount="{ item }">
             <div class="savings-cell">
               <div class="savings-cell__main">
                 <span class="cell-value">{{ item.interestAmount || '-' }}</span>
-                <div v-if="item.interestSavedPercent > 0" class="savings-badge">
+                <div
+                  v-if="item.interestSavedPercent > 0"
+                  class="savings-badge"
+                >
                   -{{ item.interestSavedPercent }}%
                 </div>
               </div>
-              <div v-if="item.interestSaved > 1" class="savings-subtext">
+              <div
+                v-if="item.interestSaved > 1"
+                class="savings-subtext"
+              >
                 you'll save <span class="savings-highlight">{{ formatCurrency(item.interestSaved) }}</span>
               </div>
             </div>
           </template>
           
-          <template v-slot:item.emi="{ item }">
+          <template #item.emi="{ item }">
             <span class="cell-value">{{ item.emi }}</span>
           </template>
           
-          <template v-slot:item.tenure="{ item }">
+          <template #item.tenure="{ item }">
             <div class="savings-cell">
               <span class="cell-value">{{ item.tenure }}</span>
-              <div v-if="item.tenureSavedMonths > 0" class="savings-subtext">
+              <div
+                v-if="item.tenureSavedMonths > 0"
+                class="savings-subtext"
+              >
                 you'll save <span class="savings-highlight">{{ getTenureSavedText(item) }}</span>
               </div>
             </div>
           </template>
           
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <img 
               :src="deleteIcon" 
               alt="Delete" 
               class="delete-icon"
               @click.stop="deleteLoan(item)"
-            />
+            >
           </template>
           
-          <template v-slot:bottom>
-            <div class="add-loan-row" @click="addLoan" v-if="!prepaymentResults">
+          <template #bottom>
+            <div
+              v-if="!prepaymentResults"
+              class="add-loan-row"
+              @click="addLoan"
+            >
               <div class="add-loan-content">
-                <img :src="plusIcon" alt="Add" class="plus-icon" />
+                <img
+                  :src="plusIcon"
+                  alt="Add"
+                  class="plus-icon"
+                >
                 <span class="add-loan-text">Add Loan</span>
               </div>
             </div>
           </template>
 
-          <template v-slot:no-data>
-            <div class="no-data-text">No data available</div>
+          <template #no-data>
+            <div class="no-data-text">
+              No data available
+            </div>
           </template>
         </v-data-table>
       </div>
@@ -105,7 +127,11 @@
         <Button @click="handlePrepaymentClick" />
         
         <!-- Reset Prepayments Button -->
-        <Button v-if="prepaymentResults" variant="Secondary" @click="resetPrepayments">
+        <Button
+          v-if="prepaymentResults"
+          variant="Secondary"
+          @click="resetPrepayments"
+        >
           Reset Prepayments
         </Button>
       </div>
@@ -119,7 +145,6 @@
       @submit="handlePrepaymentSubmit"
     />
   </div>
-
 </template>
 
 <script>

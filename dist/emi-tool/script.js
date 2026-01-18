@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Destroy charts if present
     if (window.paymentChart && typeof window.paymentChart.destroy === 'function') {
-      try { window.paymentChart.destroy(); } catch (e) {}
+      try { window.paymentChart.destroy(); } catch (e) { }
     }
     if (window.amortizationChart && typeof window.amortizationChart.destroy === 'function') {
-      try { window.amortizationChart.destroy(); } catch (e) {}
+      try { window.amortizationChart.destroy(); } catch (e) { }
     }
   }
 
@@ -108,11 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!Number.isFinite(y)) return;
       if (!yearMap[y]) yearMap[y] = { year: y, principal: 0, interest: 0, balance: 0 };
       yearMap[y].principal += Number(row.principal || 0);
-      yearMap[y].interest  += Number(row.interest || 0);
+      yearMap[y].interest += Number(row.interest || 0);
       // keep last non-zero balance for the year
       yearMap[y].balance = Number(row.balance || yearMap[y].balance || 0);
     });
-    return Object.keys(yearMap).map(k => yearMap[k]).sort((a,b) => a.year - b.year);
+    return Object.keys(yearMap).map(k => yearMap[k]).sort((a, b) => a.year - b.year);
   }
 
   // --- Chart renderers ---
@@ -229,11 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const canvas = document.getElementById('amortizationChart');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-  
+
       if (window.amortizationChart && typeof window.amortizationChart.destroy === 'function') {
         window.amortizationChart.destroy();
       }
-  
+
       const yearly = buildYearlySchedule(monthlySchedule || []);
       if (!yearly || yearly.length === 0) {
         window.amortizationChart = new Chart(ctx, {
@@ -243,12 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return;
       }
-  
+
       const labels = yearly.map(r => String(r.year));
-      const balanceData   = yearly.map(r => Math.round(r.balance  || 0));
+      const balanceData = yearly.map(r => Math.round(r.balance || 0));
       const principalData = yearly.map(r => Math.round(r.principal || 0));
-      const interestData  = yearly.map(r => Math.round(r.interest  || 0));
-  
+      const interestData = yearly.map(r => Math.round(r.interest || 0));
+
       window.amortizationChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -345,11 +345,11 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       });
-  
+
     } catch (err) {
       console.error('renderAmortizationChart error:', err);
     }
-  }  
+  }
 
   // ---------- core calculation + orchestration ----------
   function calculateAndDisplayResults() {
@@ -444,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (e) {
         console.warn('startDate parse failed, falling back to today', e);
       }
+
       if (!startDate) startDate = new Date();
 
       // generate monthly schedule
@@ -468,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         originalMetrics.interest = actualInterestFromSchedule;
         originalMetrics.total = P + actualInterestFromSchedule;
       }
-      
+
       // Update summary + pie chart with the actual interest from schedule
       try { updateSummary(originalMetrics); } catch (e) { console.warn('updateSummary missing or errored', e); }
       try { renderPaymentBreakupChart(P, originalMetrics.interest); } catch (e) { console.warn('renderPaymentBreakupChart missing or errored', e); }
@@ -486,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (outerErr) {
       console.error('calculateAndDisplayResults fatal error:', outerErr);
-      try { resetUI(); } catch (e) {}
+      try { resetUI(); } catch (e) { }
     }
   }
 
@@ -497,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let outstanding = principalBase;
     const schedule = [];
     const totalMonths = moratoriumMonths + tenureMonths;
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     for (let i = 0; i < totalMonths; i++) {
       const mi = (startMonthIndex + i) % 12;
@@ -594,8 +595,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const endPickerEl = tr.querySelector(`#prep-end-${rowData.id}`);
     const prevRowEndDate = index > 0 ? customPrepaymentRows[index - 1].endDate : null;
     try {
-      rowData.startPicker = flatpickr(startPickerEl, { wrap: true, dateFormat: "d-m-Y", defaultDate: rowData.startDate, minDate: prevRowEndDate ? new Date(prevRowEndDate).fp_incr(1) : overallLoanStartDate, maxDate: overallLoanEndDate, onChange: (d) => { rowData.startDate = d[0]; }});
-      rowData.endPicker = flatpickr(endPickerEl, { wrap: true, dateFormat: "d-m-Y", defaultDate: rowData.endDate, minDate: rowData.startDate || overallLoanStartDate, maxDate: overallLoanEndDate, onChange: (d) => { rowData.endDate = d[0]; }});
+      rowData.startPicker = flatpickr(startPickerEl, { wrap: true, dateFormat: "d-m-Y", defaultDate: rowData.startDate, minDate: prevRowEndDate ? new Date(prevRowEndDate).fp_incr(1) : overallLoanStartDate, maxDate: overallLoanEndDate, onChange: (d) => { rowData.startDate = d[0]; } });
+      rowData.endPicker = flatpickr(endPickerEl, { wrap: true, dateFormat: "d-m-Y", defaultDate: rowData.endDate, minDate: rowData.startDate || overallLoanStartDate, maxDate: overallLoanEndDate, onChange: (d) => { rowData.endDate = d[0]; } });
     } catch (e) {
       // flatpickr might be missing or invalid wrappers - ignore gracefully
     }
@@ -686,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let i = 0; i < newSchedule.length; i++) {
       const entry = newSchedule[i];
-      
+
       // Skip prepayments for the first monthsBeforePrepayments months
       if (i < monthsBeforePrepayments) {
         entry.prepayment = 0;
@@ -718,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         continue;
       }
-      
+
       const monthKey = `${entry.year}-${new Date(Date.parse(entry.month + " 1, 2012")).getMonth() + 1}`;
       let monthPrepay = prepaymentMap[monthKey] || 0;
 
@@ -1216,29 +1217,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const loan = JSON.parse(editingData);
         editingLoanId = loan.id;
         editingLoanName = loan.name;
-        
+
         // Pre-populate the form
         if (loanAmountInput && loan.principal) {
           const principalValue = parseCurrency(loan.principal);
           loanAmountInput.value = principalValue;
         }
-        
+
         if (interestRateInput && loan.interest) {
           const interestValue = parseFloat(loan.interest.replace('%', '').trim());
           interestRateInput.value = interestValue;
         }
-        
+
         if (tenureInput && loan.tenure) {
           const tenureValue = parseFloat(loan.tenure.replace('yrs', '').replace('yr', '').trim());
           tenureInput.value = tenureValue;
         }
-        
+
         // Trigger calculation after pre-populating
         calculateAndDisplayResults();
-        
+
         // Load prepayment context if it exists
         loadPrepaymentContext();
-        
+
         console.log('Loaded editing loan data:', loan);
       }
     } catch (error) {
@@ -1251,13 +1252,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const prepaymentContextData = localStorage.getItem('prepaymentContext');
       if (!prepaymentContextData) return;
-      
+
       const context = JSON.parse(prepaymentContextData);
       console.log('=== LOADING PREPAYMENT CONTEXT ===');
       console.log('Full context:', context);
       console.log('Prepayment schedule length:', context.prepaymentSchedule?.length);
       console.log('First 10 prepayments:', context.prepaymentSchedule?.slice(0, 10));
-      
+
       // Wait for calculation to complete before loading prepayments
       setTimeout(() => {
         if (!originalScheduleData || originalScheduleData.length === 0) {
@@ -1265,7 +1266,7 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(loadPrepaymentContext, 500);
           return;
         }
-        
+
         // Convert prepayment schedule to date ranges for the modal
         if (context.prepaymentSchedule && context.prepaymentSchedule.length > 0) {
           setupPrepaymentFromContext(context);
@@ -1280,32 +1281,32 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupPrepaymentFromContext(context) {
     try {
       if (!prepaymentCustomBody) return;
-      
+
       console.log('=== SETTING UP PREPAYMENT FROM CONTEXT ===');
-      
+
       // Clear existing rows
       customPrepaymentRows = [];
       prepaymentCustomBody.innerHTML = '';
-      
+
       // Get the number of months before prepayments should start
       const monthsBeforePrepayments = context.monthsBeforePrepaymentsStart || 0;
       console.log('Months before prepayments start:', monthsBeforePrepayments);
-      
+
       // Calculate the date when prepayments should actually start
       const prepaymentStartDate = new Date(overallLoanStartDate);
       prepaymentStartDate.setMonth(prepaymentStartDate.getMonth() + monthsBeforePrepayments);
       console.log('Prepayment start date:', prepaymentStartDate);
-      
+
       // Check if this is a 16 EMI rule pattern (prepayments every 3rd month)
       // For multi-loan scenarios, we need to check the schedule that applies to THIS loan
       // Filter prepayments that apply to this loan first
-      const applicablePrepayments = (context.prepaymentSchedule || []).filter(prep => 
+      const applicablePrepayments = (context.prepaymentSchedule || []).filter(prep =>
         prep.monthIndex >= monthsBeforePrepayments
       );
-      
+
       // Check if applicable prepayments follow 16 EMI rule pattern (every 3rd month)
       // The pattern should be: first month, then +3, +3, +3...
-      const is16EMIRule = applicablePrepayments.length > 0 && 
+      const is16EMIRule = applicablePrepayments.length > 0 &&
         applicablePrepayments.every((prep, idx) => {
           if (idx === 0) {
             // First prepayment for this loan
@@ -1315,7 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Check if this month is exactly 3 months after the previous
           return prep.monthIndex === prevMonth + 3;
         });
-      
+
       console.log('=== 16 EMI RULE DETECTION ===');
       console.log('Total prepayment schedule length:', context.prepaymentSchedule?.length);
       console.log('Applicable prepayments for this loan:', applicablePrepayments.length);
@@ -1330,11 +1331,11 @@ document.addEventListener('DOMContentLoaded', () => {
           return prep.monthIndex - applicablePrepayments[idx - 1].monthIndex;
         }));
       }
-      
+
       // Group prepayments by consecutive months with same amount
       const prepaymentGroups = [];
       let currentGroup = null;
-      
+
       console.log('Processing prepayment schedule...');
       context.prepaymentSchedule.forEach((prep, index) => {
         if (index < 12) {
@@ -1343,11 +1344,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate the actual month index in the loan's schedule
         // This accounts for when prepayments actually start
         const actualMonthIndex = prep.monthIndex;
-        
+
         // Calculate date for this month (relative to loan start + offset)
         const prepDate = new Date(overallLoanStartDate);
         prepDate.setMonth(prepDate.getMonth() + actualMonthIndex);
-        
+
         // Only include prepayments that start after the delay period
         if (actualMonthIndex >= monthsBeforePrepayments) {
           // For 16 EMI rule, DON'T group - create individual entries for each prepayment month
@@ -1376,12 +1377,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       });
-      
+
       // Only push currentGroup if it exists and we're NOT using 16 EMI rule
       if (currentGroup && !is16EMIRule) {
         prepaymentGroups.push(currentGroup);
       }
-      
+
       console.log('=== PREPAYMENT GROUPS CREATED ===');
       console.log('Number of groups:', prepaymentGroups.length);
       prepaymentGroups.forEach((group, i) => {
@@ -1391,7 +1392,7 @@ document.addEventListener('DOMContentLoaded', () => {
           amount: group.amount
         });
       });
-      
+
       // Create prepayment rows from groups
       prepaymentGroups.forEach((group, index) => {
         const row = {
@@ -1406,19 +1407,19 @@ document.addEventListener('DOMContentLoaded', () => {
           prepaymentCustomBody.appendChild(rowEl);
         }
       });
-      
+
       // If no prepayments, create default empty row
       if (prepaymentGroups.length === 0) {
         setupCustomPrepaymentTab();
       }
-      
+
       // Auto-apply prepayments after a short delay
       setTimeout(() => {
         if (prepaymentGroups.length > 0) {
           applyPrepaymentsAndRecalculate();
         }
       }, 1500);
-      
+
       console.log('Pre-populated prepayment rows from context:', prepaymentGroups);
       console.log('Months before prepayments start:', monthsBeforePrepayments);
       console.log('Prepayment start date:', prepaymentStartDate);
@@ -1432,26 +1433,26 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('=== SAVE LOAN CLICKED ===');
     console.log('summaryEmiEl element:', summaryEmiEl);
     console.log('summaryInterestEl element:', summaryInterestEl);
-    
+
     // Get current values from inputs
     const loanAmount = parseFloat(loanAmountInput?.value);
     const interestRate = parseFloat(interestRateInput?.value);
     const tenure = parseFloat(tenureInput?.value);
     const emi = summaryEmiEl?.textContent || '-';
     const interestAmount = summaryInterestEl?.textContent || '-';
-    
+
     console.log('EMI element textContent:', summaryEmiEl?.textContent);
     console.log('Interest element textContent:', summaryInterestEl?.textContent);
     console.log('Fetched EMI value:', emi);
     console.log('Fetched Interest Amount value:', interestAmount);
-    
+
     // Validate inputs
-    if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure) || 
-        loanAmount <= 0 || interestRate <= 0 || tenure <= 0) {
+    if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure) ||
+      loanAmount <= 0 || interestRate <= 0 || tenure <= 0) {
       alert('Please enter valid loan details before saving.');
       return;
     }
-    
+
     // Ask for loan name if this is a new loan
     let loanName = editingLoanName;
     if (!loanName) {
@@ -1460,7 +1461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // User canceled or didn't enter a name
       }
     }
-    
+
     // Create loan object in the format expected by Calculator.vue
     const loan = {
       id: editingLoanId || Date.now(),
@@ -1471,11 +1472,11 @@ document.addEventListener('DOMContentLoaded', () => {
       emi: emi,
       tenure: `${tenure} yr${tenure > 1 ? 's' : ''}`
     };
-    
+
     try {
       // Get existing loans from localStorage
       const savedLoans = JSON.parse(localStorage.getItem('savedLoans') || '[]');
-      
+
       if (editingLoanId) {
         // Update existing loan
         const loanIndex = savedLoans.findIndex(l => l.id === editingLoanId);
@@ -1488,18 +1489,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add new loan
         savedLoans.push(loan);
       }
-      
+
       // Save back to localStorage
       localStorage.setItem('savedLoans', JSON.stringify(savedLoans));
-      
+
       // Clear editing data but keep prepayment context for persistence
       localStorage.removeItem('editingLoanData');
       // Note: prepaymentContext is kept so prepayments persist when returning
-      
+
       console.log('✅ Saved loan with Interest Amount:', loan);
       console.log('Interest Amount saved:', loan.interestAmount);
       console.log('All loans:', savedLoans);
-      
+
       // Redirect back to calculator page
       window.location.href = '/calculator';
     } catch (error) {
@@ -1514,7 +1515,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clear editing data but keep prepayment context for main page
       localStorage.removeItem('editingLoanData');
       // Note: prepaymentContext is kept so prepayments persist when returning
-      
+
       // Redirect back to calculator page
       window.location.href = '/calculator';
     }
@@ -1525,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saveLoanBottomBtn) {
     saveLoanBottomBtn.addEventListener('click', handleSaveLoan);
   }
-  
+
   // Load editing data on page load
   loadEditingLoanData();
   // ======= END OF SAVE/CANCEL LOAN FUNCTIONALITY =======

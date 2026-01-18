@@ -9,33 +9,47 @@
       <div 
         v-if="showBackButton"
         class="back-icon-wrapper"
-        @click="handleBack"
         role="button"
         tabindex="0"
+        @click="handleBack"
       >
-        <img :src="backIcon" alt="Back" class="back-icon" />
+        <img
+          :src="backIcon"
+          alt="Back"
+          class="back-icon"
+        >
       </div>
       <div class="popup-header-text">
         <h2 class="popup-header-title">
-          <slot name="title">{{ title }}</slot>
+          <slot name="title">
+            {{ title }}
+          </slot>
         </h2>
         <p class="popup-header-subtitle">
-          <slot name="subtitle">{{ subtitle }}</slot>
+          <slot name="subtitle">
+            {{ subtitle }}
+          </slot>
         </p>
       </div>
       <button 
         class="popup-close-btn"
-        @click="handleClose"
         aria-label="Close"
+        @click="handleClose"
       >
-        <img :src="closeIcon" alt="Close" class="popup-close-icon" />
+        <img
+          :src="closeIcon"
+          alt="Close"
+          class="popup-close-icon"
+        >
       </button>
     </template>
 
     <!-- Footer Type -->
     <template v-if="type === 'Footer'">
       <Button @click="handleAction">
-        <slot name="button">{{ buttonText }}</slot>
+        <slot name="button">
+          {{ buttonText }}
+        </slot>
       </Button>
     </template>
   </div>

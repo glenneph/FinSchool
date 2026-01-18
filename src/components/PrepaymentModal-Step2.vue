@@ -1,5 +1,9 @@
 <template>
-  <div v-if="isOpen" class="modal-overlay" @click.self="closeModal">
+  <div
+    v-if="isOpen"
+    class="modal-overlay"
+    @click.self="closeModal"
+  >
     <div class="modal-card">
       <!-- Header using PopUp component -->
       <PopUp 

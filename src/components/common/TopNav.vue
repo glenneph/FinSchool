@@ -1,11 +1,20 @@
 <template>
   <nav class="top-nav">
-    <h1 class="logo" @click="navigateToHome">FinSchool</h1>
+    <h1
+      class="logo"
+      @click="navigateToHome"
+    >
+      FinSchool
+    </h1>
     <div class="right-nav">
       <div class="nav-items-desktop">
         <div class="nav-item-with-icon">
           <div class="icon-wrapper">
-            <img :src="youtubeIcon" alt="" class="youtube-icon" />
+            <img
+              :src="youtubeIcon"
+              alt=""
+              class="youtube-icon"
+            >
           </div>
           <span class="nav-text">How to Use</span>
         </div>
@@ -15,7 +24,11 @@
       </div>
       <div class="nav-menu-tablet">
         <div class="menu-icon-wrapper">
-          <img :src="menuIcon" alt="Menu" class="menu-icon" />
+          <img
+            :src="menuIcon"
+            alt="Menu"
+            class="menu-icon"
+          >
         </div>
       </div>
     </div>

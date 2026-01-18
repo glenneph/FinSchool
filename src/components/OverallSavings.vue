@@ -1,7 +1,9 @@
 <template>
   <div class="overall-savings">
     <div class="overall-savings__header">
-      <h2 class="overall-savings__title">Overall Savings</h2>
+      <h2 class="overall-savings__title">
+        Overall Savings
+      </h2>
     </div>
     
     <div class="overall-savings__content">
@@ -20,12 +22,18 @@
               <span class="overall-savings__label">Total Amount</span>
               <div class="overall-savings__value-group">
                 <span class="overall-savings__value">{{ formatCurrency(savings.totalNewAmount) }}</span>
-                <div v-if="savings.totalSavedPercent > 0" class="overall-savings__badge">
+                <div
+                  v-if="savings.totalSavedPercent > 0"
+                  class="overall-savings__badge"
+                >
                   -{{ savings.totalSavedPercent }}%
                 </div>
               </div>
             </div>
-            <div v-if="savings.totalSaved > 0" class="overall-savings__subtext">
+            <div
+              v-if="savings.totalSaved > 0"
+              class="overall-savings__subtext"
+            >
               you'll save <span class="overall-savings__subtext-highlight">{{ formatCurrency(savings.totalSaved) }}</span>
             </div>
           </div>
@@ -39,12 +47,18 @@
               <span class="overall-savings__label">Interest Amount</span>
               <div class="overall-savings__value-group">
                 <span class="overall-savings__value">{{ formatCurrency(savings.totalNewInterest) }}</span>
-                <div v-if="savings.interestSavedPercent > 0" class="overall-savings__badge">
+                <div
+                  v-if="savings.interestSavedPercent > 0"
+                  class="overall-savings__badge"
+                >
                   -{{ savings.interestSavedPercent }}%
                 </div>
               </div>
             </div>
-            <div v-if="savings.interestSaved > 0" class="overall-savings__subtext">
+            <div
+              v-if="savings.interestSaved > 0"
+              class="overall-savings__subtext"
+            >
               you'll save <span class="overall-savings__subtext-highlight">{{ formatCurrency(savings.interestSaved) }}</span>
             </div>
           </div>

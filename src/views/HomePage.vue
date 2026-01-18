@@ -3,23 +3,41 @@
     <TopNav />
     <div class="container">
       <div class="cards-row">
-        <div class="card" @click="navigateToHealthInsurance">
+        <div
+          class="card"
+          @click="navigateToHealthInsurance"
+        >
           <div class="card-image-wrapper">
-            <img :src="healthInsuranceImage" alt="Health Insurance" class="card-image" />
+            <img
+              :src="healthInsuranceImage"
+              alt="Health Insurance"
+              class="card-image"
+            >
           </div>
           <div class="card-content">
             <div class="card-text">
-              <p class="card-title">Health Insurance Cover Amount Calculator</p>
+              <p class="card-title">
+                Health Insurance Cover Amount Calculator
+              </p>
             </div>
           </div>
         </div>
-        <div class="card" @click="navigateToCalculator">
+        <div
+          class="card"
+          @click="navigateToCalculator"
+        >
           <div class="card-image-wrapper">
-            <img :src="emiCalculatorImage" alt="EMI Calculator" class="card-image" />
+            <img
+              :src="emiCalculatorImage"
+              alt="EMI Calculator"
+              class="card-image"
+            >
           </div>
           <div class="card-content">
             <div class="card-text">
-              <p class="card-title">EMI Calculator</p>
+              <p class="card-title">
+                EMI Calculator
+              </p>
             </div>
           </div>
         </div>
