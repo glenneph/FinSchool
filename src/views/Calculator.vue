@@ -358,7 +358,7 @@ export default {
       }
       
       // Redirect to calculator page
-      window.location.href = '/calculator/index.html'
+      window.location.href = '/emi-tool/index.html'
     },
     handlePrepaymentClick() {
       console.log('Check Prepayments clicked!')
@@ -442,7 +442,7 @@ export default {
     addLoan() {
       console.log('Add Loan clicked!')
       // Open EMI Calculator tool in the same page
-      window.location.href = '/calculator/index.html'
+      window.location.href = '/emi-tool/index.html'
     },
     deleteLoan(item) {
       console.log('Delete loan:', item)
