@@ -6,6 +6,15 @@
   >
     <!-- Header Type -->
     <template v-if="type === 'Header'">
+      <div 
+        v-if="showBackButton"
+        class="back-icon-wrapper"
+        @click="handleBack"
+        role="button"
+        tabindex="0"
+      >
+        <img :src="backIcon" alt="Back" class="back-icon" />
+      </div>
       <div class="popup-header-text">
         <h2 class="popup-header-title">
           <slot name="title">{{ title }}</slot>
@@ -77,11 +86,28 @@ export default {
     closeIcon: {
       type: String,
       default: '/assets/cancel.svg'
+    },
+    /**
+     * Back icon path (for Header type)
+     */
+    backIcon: {
+      type: String,
+      default: '/assets/arrow-left-01-round.svg'
+    },
+    /**
+     * Show back button (for Header type)
+     */
+    showBackButton: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     handleClose() {
       this.$emit('close')
+    },
+    handleBack() {
+      this.$emit('back')
     },
     handleAction() {
       this.$emit('action')
@@ -102,9 +128,29 @@ export default {
 .popup-container--header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: var(--token-spacing-16pt) var(--token-spacing-24pt);
   border-bottom: 1px solid var(--token-stroke-green);
+}
+
+.back-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: var(--token-spacing-8pt); /* Minimal hit area padding */
+  margin-right: var(--token-spacing-8pt);
+  transition: opacity 0.2s ease;
+}
+
+.back-icon-wrapper:hover {
+  opacity: 0.7;
+}
+
+.back-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .popup-header-text {
@@ -112,6 +158,8 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
+  flex: 1;
+  justify-content: center;
 }
 
 .popup-header-title {

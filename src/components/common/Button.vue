@@ -29,6 +29,7 @@ export default {
       validator: (value) => ['Primary', 'Secondary'].includes(value)
     }
   },
+  emits: ['click'],
   data() {
     return {
       isHovered: false

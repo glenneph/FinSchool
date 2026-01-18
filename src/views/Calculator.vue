@@ -15,6 +15,7 @@
           :items="loans"
           hide-default-footer
           class="custom-loan-table"
+          @click:row="handleRowClick"
         >
           <template v-slot:item.name="{ item }">
             <input 
@@ -23,6 +24,7 @@
               @blur="saveRename(item)"
               @keyup.enter="saveRename(item)"
               @keyup.esc="cancelEdit"
+              @click.stop
               class="loan-name-input"
               ref="nameInput"
               autofocus
@@ -31,7 +33,7 @@
             <span 
               v-else
               class="loan-name editable"
-              @click="startEdit(item)"
+              @click.stop="startEdit(item)"
               :title="'Click to rename'"
             >
               {{ item.name }}
@@ -39,11 +41,11 @@
           </template>
           
           <template v-slot:item.principal="{ item }">
-            <span class="cell-value clickable-cell" @click="editLoan(item)">{{ item.principal }}</span>
+            <span class="cell-value">{{ item.principal }}</span>
           </template>
           
           <template v-slot:item.interest="{ item }">
-            <span class="cell-value clickable-cell" @click="editLoan(item)">{{ item.interest }}</span>
+            <span class="cell-value">{{ item.interest }}</span>
           </template>
           
           <template v-slot:item.interestAmount="{ item }">
@@ -61,12 +63,12 @@
           </template>
           
           <template v-slot:item.emi="{ item }">
-            <span class="cell-value clickable-cell" @click="editLoan(item)">{{ item.emi }}</span>
+            <span class="cell-value">{{ item.emi }}</span>
           </template>
           
           <template v-slot:item.tenure="{ item }">
             <div class="savings-cell">
-              <span class="cell-value clickable-cell" @click="editLoan(item)">{{ item.tenure }}</span>
+              <span class="cell-value">{{ item.tenure }}</span>
               <div v-if="item.tenureSavedMonths > 0" class="savings-subtext">
                 you'll save <span class="savings-highlight">{{ getTenureSavedText(item) }}</span>
               </div>
@@ -78,17 +80,21 @@
               :src="deleteIcon" 
               alt="Delete" 
               class="delete-icon"
-              @click="deleteLoan(item)"
+              @click.stop="deleteLoan(item)"
             />
           </template>
           
           <template v-slot:bottom>
-            <div class="add-loan-row" @click="addLoan">
+            <div class="add-loan-row" @click="addLoan" v-if="!prepaymentResults">
               <div class="add-loan-content">
                 <img :src="plusIcon" alt="Add" class="plus-icon" />
                 <span class="add-loan-text">Add Loan</span>
               </div>
             </div>
+          </template>
+
+          <template v-slot:no-data>
+            <div class="no-data-text">No data available</div>
           </template>
         </v-data-table>
       </div>
@@ -170,20 +176,9 @@ export default {
     // Load prepayment results from localStorage to persist across navigation
     this.loadPrepaymentResults()
     
-    // If no loans exist, add a default one for demo
+    // If no loans exist, do nothing (start empty)
     if (this.loans.length === 0) {
-      console.log('No loans found, creating default loan')
-      const defaultLoan = { 
-        id: Date.now(),
-        name: 'Housing Loan',
-        principal: '₹14,54,615',
-        interest: '18%',
-        emi: '₹19,566',
-        tenure: '15 yrs'
-      }
-      defaultLoan.interestAmount = this.calculateInterestAmount(defaultLoan)
-      console.log('Default loan created:', defaultLoan)
-      this.loans = [defaultLoan]
+      console.log('No loans found, starting with empty table')
     }
   },
   methods: {
@@ -527,6 +522,17 @@ export default {
     getLoanResult(loanId) {
       if (!this.prepaymentResults || !this.prepaymentResults.loanResults) return null;
       return this.prepaymentResults.loanResults.find(r => r.id === loanId);
+    },
+    handleRowClick(event, { item }) {
+      // Check if the clicked cell is the first one (Name column)
+      const cell = event.target.closest('td');
+      // cellIndex 0 is the Name column
+      if (cell && cell.cellIndex === 0) {
+        this.startEdit(item);
+      } else {
+        // For all other cells, go to the calculator
+        this.editLoan(item);
+      }
     }
   }
 }
@@ -655,6 +661,7 @@ export default {
 
 :deep(tbody tr) {
   background-color: var(--token-table-bg) !important;
+  cursor: pointer;
 }
 
 :deep(tbody tr:hover) {
@@ -799,9 +806,24 @@ export default {
   font-weight: var(--font-weight-400);
   font-size: var(--font-size-xs);
   line-height: var(--line-height-sm);
-  color: var(--token-text-primary);
-  text-align: right;
+  color: var(--token-text-green); /* Using green for subtext too as per design */
 }
+
+/* No Data Styling */
+.no-data-text {
+  font-family: var(--font-typeface-body);
+  font-weight: var(--font-weight-500);
+  font-size: var(--font-size-md);
+  color: var(--token-text-primary);
+  padding: var(--token-spacing-24pt);
+  border-bottom: 1px solid var(--token-stroke-primary);
+  text-align: center;
+}
+
+.custom-loan-table :deep(.v-data-table-rows-no-data td) {
+  padding: 0 !important;
+}
+
 
 .savings-highlight {
   font-weight: var(--font-weight-700);

@@ -9,6 +9,7 @@
           title="Check Prepayments"
           subtitle="(Step 1/2)"
           :close-icon="closeIcon"
+          :show-back-button="false"
           @close="closeModal"
         />
 
@@ -127,6 +128,7 @@
     <PrepaymentModalStep2 
       :is-open="showMethodModal"
       @close="handleMethodModalClose"
+      @back="handleMethodModalBack"
       @submit="handleMethodSubmit"
     />
   </div>
@@ -331,8 +333,12 @@ export default {
       }
       this.showMethodModal = true
     },
+    handleMethodModalBack() {
+      this.showMethodModal = false
+    },
     handleMethodModalClose() {
       this.showMethodModal = false
+      this.$emit('close')
     },
     handleMethodSubmit(selectedMethod) {
       const transformedRows = this.prepaymentRows.map(row => ({

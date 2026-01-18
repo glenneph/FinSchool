@@ -7,6 +7,8 @@
         title="Check Prepayments"
         subtitle="(Step 2/2)"
         :close-icon="closeIcon"
+        :show-back-button="true"
+        @back="handleBack"
         @close="closeModal"
       />
 
@@ -62,6 +64,10 @@ export default {
     closeModal() {
       console.log('=== STEP 2: Close clicked (going back to Step 1) ===');
       this.$emit('close')
+    },
+    handleBack() {
+      console.log('=== STEP 2: Back clicked (going back to Step 1) ===');
+      this.$emit('back')
     },
     handleSubmit() {
       console.log('=== STEP 2: Submit clicked ===');
