@@ -143,8 +143,52 @@ function sortLoansByMethod(loans, method) {
  */
 
 
+/**
+ * Recalculate loan schedule after prepayments are added
+ */
+function recalculateScheduleWithPrepayments(schedule) {
+  const newSchedule = [];
+  let outstanding = schedule[0].balance + schedule[0].principal;
+  const monthlyRate = schedule[0].interest / outstanding;
+  const emi = schedule[0].emi;
 
+  for (let i = 0; i < schedule.length; i++) {
+    const entry = schedule[i];
 
+    const interestPayment = outstanding * monthlyRate;
+    let principalPayment = Math.max(0, emi - interestPayment);
+    const prepayment = entry.prepayment || 0;
+
+    const totalReduction = principalPayment + prepayment;
+
+    if (outstanding <= totalReduction) {
+      const actualPrincipal = Math.min(outstanding, principalPayment);
+      const actualPrepayment = Math.max(0, outstanding - actualPrincipal);
+
+      newSchedule.push({
+        ...entry,
+        principal: actualPrincipal,
+        interest: interestPayment,
+        prepayment: actualPrepayment,
+        total: actualPrincipal + interestPayment + actualPrepayment,
+        balance: 0
+      });
+      break;
+    } else {
+      outstanding -= totalReduction;
+      newSchedule.push({
+        ...entry,
+        principal: principalPayment,
+        interest: interestPayment,
+        prepayment,
+        total: emi + prepayment,
+        balance: outstanding
+      });
+    }
+  }
+
+  return newSchedule;
+}
 
 /**
  * Parse date string in format DD-MM-YYYY to Date object
